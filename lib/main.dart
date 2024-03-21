@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'variables.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_app/homepage.dart';
+import 'package:random_user/homepage.dart';
 
 void main() => runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
