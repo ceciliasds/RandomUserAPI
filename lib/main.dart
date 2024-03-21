@@ -1,24 +1,66 @@
+//main.dart-empty
 import 'package:flutter/material.dart';
+//insert1
+import 'dart:convert';
+import 'variables.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_app/homepage.dart';
 
 void main() => runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Loading(),
     ));
 
+//change the one that is here
 class Loading extends StatefulWidget {
-  const Loading({Key? key}) : super(key: key);
+  const Loading({super.key});
 
   @override
-  _LoadingState createState() => _LoadingState();
-}
+  State<Loading> createState() => _LoadingState();
+} //up to here
 
 class _LoadingState extends State<Loading> {
+  //insert2 Future void and overrride
+  Future<void> getData() async {
+    try {
+      final response =
+      await http.get(Uri.parse(url)).timeout(Duration(seconds: 6));
+      print("connected");
+      data = [jsonDecode(response.body)];
+      print(data[0]['results'][0]['name']['first']);
+      await Future.delayed(Duration(seconds: 3));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Homepage()));
+    } catch (e) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Message'),
+              content: Text('No internet connection'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      getData();
+                      Navigator.pop(context);
+                    },
+                    child: Text('Retry'))
+              ],
+            );
+          });
+    }
+  }
 
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  } //up to here
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:Colors.teal[200],
+      backgroundColor: Colors.teal[200],
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -43,11 +85,11 @@ class _LoadingState extends State<Loading> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Material(
-                    elevation: 4, 
+                    elevation: 4,
                     shape: CircleBorder(),
                     child: ClipOval(
                       child: SizedBox(
-                        width:130, 
+                        width:130,
                         height: 130,
                         child: Image.network(
                           'https://cdn.dribbble.com/users/1210339/screenshots/2767019/avatar18.gif',
@@ -71,7 +113,6 @@ class _LoadingState extends State<Loading> {
               ),
             ),
             SizedBox(height: 20),
-
           ],
         ),
       ),
