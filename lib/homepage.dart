@@ -3,15 +3,8 @@ import 'dart:convert';
 import 'variables.dart';
 import 'package:http/http.dart' as http;
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: Homepage(),
-  ));
-}
-
 class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+  const Homepage({Key? key}) : super(key: key);
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -27,7 +20,7 @@ class _HomepageState extends State<Homepage> {
   String? phoneNumber;
   String? image;
 
-    @override
+  @override
   void initState() {
     super.initState();
      getData();
@@ -76,7 +69,12 @@ class _HomepageState extends State<Homepage> {
       backgroundColor: Colors.teal[200],
       appBar: AppBar(
         backgroundColor:Color.fromARGB(255, 2, 2, 27),
-        title: Text('RANDOM USER'),
+        title: Text(
+          'RANDOM USER',
+          style: TextStyle(
+            color: Color(0xFFFFFFFF),
+          ),
+        ),
         centerTitle: true,
       ),
       body: RefreshIndicator(
@@ -178,24 +176,23 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
-}
 
-Widget _buildIconsRow() {
-  IconData genderIcon = gender == 'male' ? Icons.male_outlined : Icons.female_outlined;
+  Widget _buildIconsRow() {
+    IconData genderIcon = gender == 'male' ? Icons.male_outlined : Icons.female_outlined;
 
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: [
-      _buildIconWithDetail(Icons.pin_drop_outlined, 'I am from ', country!,'Country', Colors.blue),
-      _buildIconWithDetail(genderIcon, 'My gender is ', gender!,'Gender', Colors.green),
-      _buildIconWithDetail(Icons.email, 'You can contact me at ', email!,'Email', Colors.orange),
-      _buildIconWithDetail(Icons.person, 'The username I use is ', username!,'Username', Colors.purple),
-      _buildIconWithDetail(Icons.call, 'This is my number: ', phoneNumber!,'Phone Number', Colors.red),
-    ],
-  );
-}
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildIconWithDetail(Icons.pin_drop_outlined, 'I am from ', country!,'Country', Colors.blue),
+        _buildIconWithDetail(genderIcon, 'My gender is ', gender!,'Gender', Colors.green),
+        _buildIconWithDetail(Icons.email, 'You can contact me at ', email!,'Email', Colors.orange),
+        _buildIconWithDetail(Icons.person, 'The username I use is ', username!,'Username', Colors.purple),
+        _buildIconWithDetail(Icons.call, 'This is my number: ', phoneNumber!,'Phone Number', Colors.red),
+      ],
+    );
+  }
 
-    Widget _buildIconWithDetail(IconData iconData,String title,String detail,String tooltipMessage,Color color,) {
+  Widget _buildIconWithDetail(IconData iconData,String title,String detail,String tooltipMessage,Color color,) {
     return Tooltip(
       message: tooltipMessage,
       preferBelow: false,
