@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'variables.dart';
+import 'package:http/http.dart' as http;
+
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
@@ -26,12 +30,44 @@ class _HomepageState extends State<Homepage> {
     @override
   void initState() {
     super.initState();
-    country = "United States";
-    gender = "Male";
-    email = "john.doe@example.com";
-    username = "johndoe123";
-    phoneNumber = "+1 123-456-7890";
-    name = "JOHN DOE";
+     getData();
+  }
+
+   Future<void> getData() async {
+    selectedDetail = null;
+    try {
+      final response = await http.get(Uri.parse(url)).timeout(Duration(seconds: 6));
+      print("connected");
+      setState(() {
+        data = [jsonDecode(response.body)];
+        image = data[0]['results'][0]['picture']['large'];
+        name = data[0]['results'][0]['name']['title'] + '. ' + data[0]['results'][0]['name']['first'] +' '+ data[0]['results'][0]['name']['last'];
+        country = data[0]['results'][0]['location']['country'];
+        gender = data[0]['results'][0]['gender'];
+        email = data[0]['results'][0]['email'];
+        username = data[0]['results'][0]['login']['username'];
+        phoneNumber = data[0]['results'][0]['phone'];
+      });
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Message'),
+            content: Text('No internet connection'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  getData();
+                  Navigator.pop(context);
+                },
+                child: Text('Retry'),
+              )
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -43,7 +79,8 @@ class _HomepageState extends State<Homepage> {
         title: Text('RANDOM USER'),
         centerTitle: true,
       ),
-      body: ListView(
+      body: RefreshIndicator(
+        child: ListView(
         children: [
           Container(
             margin: EdgeInsets.all(20),
@@ -75,7 +112,7 @@ class _HomepageState extends State<Homepage> {
                             width: 150,
                             height: 150,
                             child: Image.network(
-                              'https://th.bing.com/th/id/R.1a1f10b6714487c2ce8f56baf90f3c15?rik=YaLjGFUF5m5ZcQ&riu=http%3a%2f%2fupload.wikimedia.org%2fwikipedia%2fcommons%2f9%2f9b%2fPhoto_of_a_kitten.jpg&ehk=D%2bCxp6dPLSkHfYa8JvraOQ0MScRDCwP95fuL7yMpZ7E%3d&risl=&pid=ImgRaw&r=0',
+                              image!,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -86,7 +123,7 @@ class _HomepageState extends State<Homepage> {
                   SizedBox(height: 10),
                   Center(
                     child: Text(
-                      name!,
+                      name!.toUpperCase(),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 23,
@@ -116,6 +153,8 @@ class _HomepageState extends State<Homepage> {
             ),
           ),
         ],
+       ),
+        onRefresh: getData,
       ),
       bottomNavigationBar: BottomAppBar(
         color: Color.fromARGB(255, 2, 2, 27),
@@ -129,6 +168,7 @@ class _HomepageState extends State<Homepage> {
               IconButton(
                 icon: Icon(Icons.refresh, color: Colors.white),
                 onPressed: () {
+                  getData();
                   setState(() {});
                 },
               ),
